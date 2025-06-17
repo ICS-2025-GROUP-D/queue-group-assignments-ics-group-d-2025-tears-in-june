@@ -1,6 +1,9 @@
 #Import the time class to allow timers
 import time as time
 
+#Import threading
+import threading
+
 #Specify the class
 class CircularPrinterQueue:
     #Constant
@@ -12,6 +15,7 @@ class CircularPrinterQueue:
         self.front = 0
         self.size = 0
         self.jobId= 0
+        self.lock = threading.Lock()#New module 4 code
 
     #Method for empty check
     def is_empty(self):
@@ -60,6 +64,22 @@ class CircularPrinterQueue:
         self.size-=1
         return output
 
+        # New module 4 method= handle_simultaneous_submissions
+    def handle_simultaneous_submissions(self, user_ids):
+        threads = []
+
+        def submit_job(user_id):
+            with self.lock:  # Ensure only one thread enqueues at a time
+                self.enqueue(user_id)
+
+        for user_id in user_ids:
+            t = threading.Thread(target=submit_job, args=(user_id,))
+            threads.append(t)
+            t.start()
+
+        for t in threads:
+            t.join()  # Wait for all threads to finish before continuing
+
     def show_status(self):
         count:int = 0
         i:int = 0
@@ -82,6 +102,8 @@ if __name__=="__main__":
     cpq.enqueue("Albert")
     cpq.enqueue("Muigai")
     cpq.show_status()
+    cpq.handle_simultaneous_submissions(["Ivan", "Mayabi", "Albert", "Muigai"])
+    print(cpq.show_status())
     print(cpq.dequeue())
     print(cpq.dequeue())
     print(cpq.dequeue())
