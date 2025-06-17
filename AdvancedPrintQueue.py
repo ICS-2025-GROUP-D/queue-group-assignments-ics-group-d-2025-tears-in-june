@@ -8,7 +8,7 @@ class CircularPrinterQueue:
 
     #Constructor
     def __init__(self):
-        self.data = [[None,None,None,None]] * self.CAPACITY
+        self.data = [[None,None,None,None] for _ in range(self.CAPACITY)]
         self.front = 0
         self.size = 0
         self.jobId= 0
@@ -46,17 +46,18 @@ class CircularPrinterQueue:
         self.jobId +=1
         job_id = self.jobId
         priority = 1
-        waiting_time = time.perf_counter_ns()
-        self.data[avail]= [user_id,job_id,priority,waiting_time]
+        current_time = time.perf_counter_ns()
+        self.data[avail]= [user_id,job_id,priority,current_time]
         self.size+=1
 
     def dequeue(self):
         if self.is_empty():
             print("The queue is empty, can't print anything")
-            return
+            return None
         output = self.data[self.front]
         self.data[self.front]= [None,None,None,None]
         self.front = (self.front + 1)% self.CAPACITY
+        self.size-=1
         return output
 
     def show_status(self):
@@ -67,11 +68,9 @@ class CircularPrinterQueue:
                 count+=1
             i+=1
         if count==0:
-            print("There are no jobs in the queue")
-            return
+            return "There are no jobs in the queue"
         else:
-            print(f"There are {count} job(s) in the queue")
-            return
+            return f"There are {count} job(s) in the queue"
 
 if __name__=="__main__":
     cpq = CircularPrinterQueue()
@@ -87,5 +86,5 @@ if __name__=="__main__":
     print(cpq.dequeue())
     print(cpq.dequeue())
     print(cpq.dequeue())
-    cpq.dequeue()
-    cpq.dequeue()
+    print(cpq.dequeue())
+    print(cpq.dequeue())
