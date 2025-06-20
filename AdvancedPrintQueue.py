@@ -42,14 +42,13 @@ class CircularPrinterQueue:
                 -  Priority will be default 1
                 -  Waiting time will be obtained from the value on time.perf_counter()
                         * time.perf_counter()[Python] is similar to System.nanoTime[Java]"""
-    def enqueue(self,user_id):
+    def enqueue(self,user_id,priority = 1):
         if self.is_full():
             print("The queue is full, wait a short while")
             return
         avail = (self.size + self.front) % self.CAPACITY
         self.jobId +=1
         job_id = self.jobId
-        priority = 1
         current_time = time.perf_counter_ns()
         self.data[avail]= [user_id,job_id,priority,current_time]
         self.size+=1
